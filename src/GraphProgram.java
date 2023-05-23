@@ -96,13 +96,13 @@ class GraphPanel extends JPanel {
     private List<Node> nodes;
     private List<Edge> edges;
     private int[][] adjacencyMatrix;  //массив adjacencyMatrix является матрицей смежности графа.
-    private List<Integer> shortestPath;
+    private List<Integer> redZeroPart;// те вершины, которые дожны быть красными (и равнми 0 в моём методе проверки на двудольные графы)
 
     public GraphPanel() {
         nodes = new ArrayList<>();
         edges = new ArrayList<>();
         adjacencyMatrix = null;
-        shortestPath = new ArrayList<>();
+        redZeroPart = new ArrayList<>();
     }
 
     public int[][] getGraph() {
@@ -150,6 +150,10 @@ class GraphPanel extends JPanel {
         if (adjacencyMatrix == null) { //массив adjacencyMatrix является матрицей смежности графа.
             return false;
         }
+
+        redZeroPart.clear();
+
+
         int n = adjacencyMatrix.length; //строки - кол-во вершин графа
         int[] colors = new int[n];
         Arrays.fill(colors, -1); //заполнения массива цветов -1.
@@ -157,6 +161,8 @@ class GraphPanel extends JPanel {
         for (int i = 0; i < n; i++) {
             if (colors[i] == -1) {
                 colors[i] = 0;
+                redZeroPart.add(i); // добавляем вершину в shortestPath
+
                 Queue<Integer> queue = new LinkedList<>();
                 queue.offer(i); // добавления элемента в конец очереди.
 
@@ -167,6 +173,7 @@ class GraphPanel extends JPanel {
                         if (adjacencyMatrix[u][v] == 1) { //для каждой вершины v, смежной с u, проверяется ее цвет
                             if (colors[v] == -1) {        //Если v еще не окрашена, то ей присваивается цвет, отличный от цвета u
                                 colors[v] = 1 - colors[u];
+                                 if((1 - colors[u] )== 0){ redZeroPart.add(v);}
                                 queue.offer(v);
                             } else if (colors[v] == colors[u]) { //Если же v уже окрашена и ее цвет совпадает с цветом u, то граф не является двудольным и возвращается значение false.
                                 return false;
@@ -181,12 +188,12 @@ class GraphPanel extends JPanel {
     }
 
     public void highlightShortestPath() {
-        // Подсветка кратчайшего пути на графе
+       /* // Подсветка кратчайшего пути на графе
         resetPathHighlight();
 
-        for (int i = 1; i < shortestPath.size(); i++) {
-            int nodeA = shortestPath.get(i - 1);
-            int nodeB = shortestPath.get(i);
+        for (int i = 1; i < redZeroPart.size(); i++) {
+            int nodeA = redZeroPart.get(i - 1);
+            int nodeB = redZeroPart.get(i);
 
             // Подсветка узлов
             nodes.get(nodeA).setHighlighted(true);
@@ -198,6 +205,46 @@ class GraphPanel extends JPanel {
                         || (edge.getNodeA().getId() == nodeB && edge.getNodeB().getId() == nodeA)) {
                     edge.setHighlighted(true);
                     break;
+                }
+            }
+        }
+
+        // Перерисовка графа для отображения подсветки
+        repaint();
+
+        */ //даши
+
+        /* //мой но не работает чтот
+        resetPathHighlight();
+
+        for (int i = 0; i < redZeroPart.size(); i++) {
+            int nodeId = redZeroPart.get(i);
+
+            nodes.get(nodeId).setHighlighted(true);
+        }
+
+        repaint();
+
+         */
+
+        // Подсветка кратчайшего пути на графе
+        resetPathHighlight();
+
+        for (int i = 0; i < redZeroPart.size(); i++) {
+            int node = redZeroPart.get(i);
+
+            // Подсветка узла
+            nodes.get(node).setHighlighted(true);
+
+            // Подсветка ребер
+            if (i > 0) {
+                int prevNode = redZeroPart.get(i - 1);
+                for (Edge edge : edges) {
+                    if ((edge.getNodeA().getId() == node && edge.getNodeB().getId() == prevNode)
+                            || (edge.getNodeA().getId() == prevNode && edge.getNodeB().getId() == node)) {
+                        edge.setHighlighted(true);
+                        break;
+                    }
                 }
             }
         }
