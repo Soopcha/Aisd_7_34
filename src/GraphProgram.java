@@ -27,7 +27,9 @@ public class GraphProgram extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
+
         graphPanel = new GraphPanel();
+        graphPanel.setPreferredSize(new Dimension(600, 500));
         selectGraphButton = new JButton("Выбрать граф");
         ifBipartiteGraphButton = new JButton("Является ли заданный граф двудольным?");
         JFileChooser fileChooserOpen;
@@ -170,7 +172,7 @@ class GraphPanel extends JPanel {
                     int u = queue.poll(); //poll-удаления и возврат элемента из начала очереди
                     //извлекается вершина u
                     for (int v = 0; v < n; v++) {
-                        if (adjacencyMatrix[u][v] == 1) { //для каждой вершины v, смежной с u, проверяется ее цвет
+                        if (adjacencyMatrix[u][v] != 0) { //для каждой вершины v, смежной с u, проверяется ее цвет
                             if (colors[v] == -1) {        //Если v еще не окрашена, то ей присваивается цвет, отличный от цвета u
                                 colors[v] = 1 - colors[u];
                                  if((1 - colors[u] )== 0){ redZeroPart.add(v);}
@@ -188,33 +190,7 @@ class GraphPanel extends JPanel {
     }
 
     public void highlightShortestPath() {
-       /* // Подсветка кратчайшего пути на графе
-        resetPathHighlight();
-
-        for (int i = 1; i < redZeroPart.size(); i++) {
-            int nodeA = redZeroPart.get(i - 1);
-            int nodeB = redZeroPart.get(i);
-
-            // Подсветка узлов
-            nodes.get(nodeA).setHighlighted(true);
-            nodes.get(nodeB).setHighlighted(true);
-
-            // Подсветка ребер
-            for (Edge edge : edges) {
-                if ((edge.getNodeA().getId() == nodeA && edge.getNodeB().getId() == nodeB)
-                        || (edge.getNodeA().getId() == nodeB && edge.getNodeB().getId() == nodeA)) {
-                    edge.setHighlighted(true);
-                    break;
-                }
-            }
-        }
-
-        // Перерисовка графа для отображения подсветки
-        repaint();
-
-        */ //даши
-
-        /* //мой но не работает чтот
+        /* //мой
         resetPathHighlight();
 
         for (int i = 0; i < redZeroPart.size(); i++) {
@@ -224,7 +200,6 @@ class GraphPanel extends JPanel {
         }
 
         repaint();
-
          */
 
         // Подсветка кратчайшего пути на графе
@@ -236,7 +211,7 @@ class GraphPanel extends JPanel {
             // Подсветка узла
             nodes.get(node).setHighlighted(true);
 
-            // Подсветка ребер
+            /*// Подсветка ребер
             if (i > 0) {
                 int prevNode = redZeroPart.get(i - 1);
                 for (Edge edge : edges) {
@@ -247,6 +222,8 @@ class GraphPanel extends JPanel {
                     }
                 }
             }
+
+             */
         }
 
         // Перерисовка графа для отображения подсветки
